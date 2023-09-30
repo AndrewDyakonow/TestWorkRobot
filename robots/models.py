@@ -10,9 +10,10 @@ NOTHING = {'blank': False, 'null': False}
 class Robot(models.Model):
     """Модель 'Робот'"""
     serial = models.CharField(max_length=5, **NOTHING, verbose_name='Серия')
-    model = models.CharField(max_length=2, **NOTHING, verbose_name='Модель')
-    version = models.CharField(max_length=2, **NOTHING, verbose_name='Версия')
-    created = models.DateTimeField(default=now, **NOTHING, verbose_name='Дата создания')
+    model = models.CharField(max_length=2, verbose_name='Модель')
+    version = models.CharField(max_length=2, verbose_name='Версия')
+    created = models.DateTimeField(default=now, verbose_name='Дата создания')
+    in_stock = models.BooleanField(default=True, verbose_name='Наличие')
 
     def clean_fields(self, **kwargs):
         """Валидация"""
@@ -32,7 +33,7 @@ class Robot(models.Model):
     class Meta:
         verbose_name = 'Робот'
         verbose_name_plural = 'Роботы'
-        ordering = ['pk']
+        ordering = ['id']
 
     def __str__(self):
         return f'{self.serial}, {self.model}, {self.version}, {self.created}'

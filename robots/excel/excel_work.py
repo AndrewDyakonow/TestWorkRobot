@@ -19,7 +19,6 @@ class ExcelDistributor:
             created__gt=now() - timedelta(days=7))).order_by('model'))
 
         cls.models = cls.robots.values('model').distinct()
-
         cls.create_report()
 
     @classmethod
