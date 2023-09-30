@@ -1,0 +1,48 @@
+version: '3.8'
+services:
+  web-server:
+    build:
+      context: .
+    container_name: app
+    volumes:
+      - ./:/R4C/
+    environment:
+      - EMAIL_HOST=smtp.mail.ru
+      - EMAIL_HOST_USER=dronramone@mail.ru
+      - EMAIL_PORT=25
+      - DB_NAME=robot_tw
+      - DB_USER=itsme
+      - DB_PASSWORD=123qwe456rty
+    command: >
+      sh -c "python3 manage.py migrate && python3 manage.py runserver 0.0.0.0:8000"
+    networks:
+      - myNet
+    ports:
+      - '8800:8000'
+    depends_on:
+      db:
+        condition: service_healthy
+
+
+  db:
+    image: postgres:latest
+    container_name: db_for_app
+    networks:
+      - myNet
+    environment:
+      - POSTGRES_PASSWORD=123qwe456rty
+      - POSTGRES_USER=itsme
+      - POSTGRES_DB=robot_tw
+      - POSTGRES_HOST_AUTH_METHOD=md5
+    ports:
+      - '5500:5432'
+    healthcheck:
+      test: [ "CMD", "pg_isready", "-q", "-d", "robot_tw", "-U", "itsme" ]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+
+
+networks:
+  myNet:
+    driver: bridge
